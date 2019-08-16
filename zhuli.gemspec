@@ -6,7 +6,7 @@ require 'zhuli/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'zhuli'
-  spec.version       = Zhuli::VERSION
+  spec.version       = ZhuLi::VERSION
   spec.authors       = ['Rich Seviora']
   spec.email         = ['richard.seviora@gmail.com']
 

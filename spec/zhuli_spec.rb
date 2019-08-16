@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe Zhuli do
+RSpec.describe ZhuLi do
   it 'has a version number' do
-    expect(Zhuli::VERSION).not_to be nil
+    expect(ZhuLi::VERSION).not_to be nil
   end
 
   it 'does something useful' do
