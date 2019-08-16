@@ -10,6 +10,10 @@ module ZhuLi
         false
       end
 
+      def unchanged?
+        false
+      end
+
       def changed?
         false
       end
