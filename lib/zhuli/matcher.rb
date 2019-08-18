@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module ZhuLi
+  # Handles matching results.
   class Matcher
     attr_reader :before, :after, :id_method, :before_grouped, :after_grouped
     attr_reader :results
