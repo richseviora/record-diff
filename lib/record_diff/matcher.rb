@@ -6,6 +6,7 @@ module RecordDiff
     attr_reader :before, :after, :id_method, :before_grouped, :after_grouped
     attr_reader :value_method
     attr_reader :results
+    attr_reader :before_transform, :after_transform
 
     # @return [Proc]
     # @param [Proc,Symbol] symbol_or_proc - symbol or proc
@@ -15,15 +16,22 @@ module RecordDiff
       symbol_or_proc.to_proc
     end
 
+    def self.transform_proc(transform_options); end
+
     def self.diff_hash(before:, after:)
-      new before: before, after: after, id_method: :first, value_method: :second
+      new before: before, after: after,
+          options: { id_method: :first, value_method: :second }
     end
 
-    def initialize(before:, after:, id_method: :id, value_method: :itself)
+    def initialize(before:, after:, options: {})
+      options = {
+        id_method: :id,
+        value_method: :itself
+      }.merge(options)
       @before = before
       @after = after
-      @id_method = id_method
-      @value_method = self.class.create_value_method(value_method)
+      @id_method = options[:id_method]
+      @value_method = self.class.create_value_method(options[:value_method])
       process
     end
 
