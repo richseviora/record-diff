@@ -1,37 +1,28 @@
 # frozen_string_literal: true
 
+require 'forwardable'
+require 'record_diff/matcher_options'
+
 module RecordDiff
   # Handles matching results.
   class Matcher
-    attr_reader :before, :after, :id_method, :before_grouped, :after_grouped
-    attr_reader :value_method
+    extend Forwardable
+    attr_reader :before, :after, :before_grouped, :after_grouped
     attr_reader :results
-    attr_reader :before_transform, :after_transform
+    attr_reader :options
 
-    # @return [Proc]
-    # @param [Proc,Symbol] symbol_or_proc - symbol or proc
-    def self.create_value_method(symbol_or_proc = :itself)
-      return proc { |ary| ary[1] } if symbol_or_proc == :second
-
-      symbol_or_proc.to_proc
-    end
-
-    def self.transform_proc(transform_options); end
+    def_delegators :options, :id_method, :before_transform, :after_transform
 
     def self.diff_hash(before:, after:)
       new before: before, after: after,
-          options: { id_method: :first, value_method: :second }
+          options: { id_method: :first, before_transform: :second,
+                     after_transform: :second }
     end
 
     def initialize(before:, after:, options: {})
-      options = {
-        id_method: :id,
-        value_method: :itself
-      }.merge(options)
+      @options = MatcherOptions.new(options)
       @before = before
       @after = after
-      @id_method = options[:id_method]
-      @value_method = self.class.create_value_method(options[:value_method])
       process
     end
 
@@ -42,15 +33,22 @@ module RecordDiff
     end
 
     def key_for_record(record)
-      record.send id_method
+      id_method.call(record)
     end
 
-    def group_records
+    def group_records # rubocop:disable AbcSize,MethodLength
       @before_grouped = before.group_by { |r| key_for_record r }
       @after_grouped = after.group_by { |r| key_for_record r }
-      [before_grouped, after_grouped].each do |collection|
-        collection.transform_values! do |values|
-          values.map { |value| value_method.call(value) }
+
+      before_grouped.transform_values! do |values|
+        values.map do |value|
+          before_transform.call(value)
+        end
+      end
+
+      after_grouped.transform_values! do |values|
+        values.map do |value|
+          after_transform.call(value)
         end
       end
     end

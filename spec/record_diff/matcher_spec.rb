@@ -39,9 +39,7 @@ RSpec.describe RecordDiff::Matcher do
 
     context 'when diffing a Hash' do
       subject(:matcher) do
-        described_class.new(before: before_enum, after: after_enum,
-                            options: { id_method: :first,
-                                       value_method: :second })
+        described_class.diff_hash(before: before_enum, after: after_enum)
                        .process
       end
 
