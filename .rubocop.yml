@@ -1,0 +1,12 @@
+require:
+  - rubocop-rspec
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+RSpec/FilePath:
+  Enabled: false
+RSpec/ExampleLength:
+  Max: 10
+RSpec/MultipleExpectations:
+  Max: 3
