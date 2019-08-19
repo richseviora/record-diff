@@ -4,12 +4,27 @@ module ZhuLi
   # Handles matching results.
   class Matcher
     attr_reader :before, :after, :id_method, :before_grouped, :after_grouped
+    attr_reader :value_method
     attr_reader :results
 
-    def initialize(before:, after:, id_method: :id)
+    # @return [Proc]
+    # @param [Proc,Symbol] symbol_or_proc - symbol or proc
+    def self.create_value_method(symbol_or_proc = :itself)
+      return proc { |ary| ary[1] } if symbol_or_proc == :second
+
+      symbol_or_proc.to_proc
+    end
+
+    def self.diff_hash(before:, after:)
+      new before: before, after: after, id_method: :first, value_method: :second
+    end
+
+    def initialize(before:, after:, id_method: :id, value_method: :itself)
       @before = before
       @after = after
       @id_method = id_method
+      @value_method = self.class.create_value_method(value_method)
+      process
     end
 
     def process
@@ -25,14 +40,20 @@ module ZhuLi
     def group_records
       @before_grouped = before.group_by { |r| key_for_record r }
       @after_grouped = after.group_by { |r| key_for_record r }
+      [before_grouped, after_grouped].each do |collection|
+        collection.transform_values! do |values|
+          values.map { |value| value_method.call(value) }
+        end
+      end
     end
 
     def generate_results
       keys = (before_grouped.keys + after_grouped.keys).uniq
-      @results = keys.map do |key|
+      result_ary = keys.map do |key|
         generate_result key, before_grouped[key] || [], after_grouped[key] || []
       end
-      @results.flatten!
+      result_ary.flatten!
+      @results = ResultSet.new(result_ary)
     end
 
     # @param [Array] before_ary

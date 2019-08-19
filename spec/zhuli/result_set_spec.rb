@@ -9,9 +9,7 @@ RSpec.describe ZhuLi::ResultSet do
   end
   describe '#process' do
     subject(:result_set) do
-      results = ZhuLi::Matcher.new(before: before_ary, after: after_ary)
-                              .process.results
-      described_class.new(results)
+      ZhuLi::Matcher.new(before: before_ary, after: after_ary).results
     end
 
     let(:before_ary) do
