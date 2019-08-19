@@ -4,6 +4,7 @@ require:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
+    - "*.gemspec"
 RSpec/FilePath:
   Enabled: false
 RSpec/ExampleLength:
