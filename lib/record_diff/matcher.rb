@@ -11,12 +11,13 @@ module RecordDiff
     attr_reader :results
     attr_reader :options
 
-    def_delegators :options, :id_method, :before_transform, :after_transform
+    def_delegators :options, :before_id, :after_id,
+                   :before_transform, :after_transform
 
     def self.diff_hash(before:, after:)
       new before: before, after: after,
-          options: { id_method: :first, before_transform: :second,
-                     after_transform: :second }
+          options: { before_id: :first, after_id: :first,
+                     before_transform: :second, after_transform: :second }
     end
 
     def initialize(before:, after:, options: {})
@@ -36,21 +37,9 @@ module RecordDiff
       id_method.call(record)
     end
 
-    def group_records # rubocop:disable AbcSize,MethodLength
-      @before_grouped = before.group_by { |r| key_for_record r }
-      @after_grouped = after.group_by { |r| key_for_record r }
-
-      before_grouped.transform_values! do |values|
-        values.map do |value|
-          before_transform.call(value)
-        end
-      end
-
-      after_grouped.transform_values! do |values|
-        values.map do |value|
-          after_transform.call(value)
-        end
-      end
+    def group_records
+      @before_grouped = before.group_by { |r| before_id.call r }
+      @after_grouped = after.group_by { |r| after_id.call r }
     end
 
     def generate_results
@@ -74,16 +63,31 @@ module RecordDiff
       [generate_result_obj(key, before_obj, after_obj)]
     end
 
-    def generate_result_obj(key, before, after)
-      return Results::AddedResult.new id: key, after: after if before.nil?
-      return Results::DroppedResult.new id: key, before: before if after.nil?
-
-      if before == after
-        return Results::UnchangedResult.new id: key, before: before,
-                                            after: after
+    def generate_result_obj(key, before, after) # rubocop:disable MethodLength
+      before_compare = before ? before_transform.call(before) : nil
+      after_compare = after ? after_transform.call(after) : nil
+      if before_compare.nil?
+        return Results::AddedResult.new id: key,
+                                        after: after,
+                                        after_compare: after_compare
+      end
+      if after_compare.nil?
+        return Results::DroppedResult.new id: key, before: before,
+                                          before_compare: before_compare
       end
 
-      Results::ChangedResult.new id: key, before: before, after: after
+      if before_compare == after_compare
+        return Results::UnchangedResult.new(
+          id: key,
+          before: before, before_compare: before_compare,
+          after: after, after_compare: after_compare
+        )
+      end
+
+      Results::ChangedResult.new(
+        id: key, before: before, before_compare: before_compare,
+        after: after, after_compare: after_compare
+      )
     end
   end
 end

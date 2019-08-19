@@ -4,9 +4,10 @@ module RecordDiff
   module Results
     # Dropped result, if the ID is not matched in the new data.
     class DroppedResult < AbstractResult
-      def initialize(id:, before:)
+      def initialize(id:, before:, before_compare:)
         @id = id
-        @before = before
+        @before_original = before
+        @before_compare = before_compare
       end
 
       def dropped?

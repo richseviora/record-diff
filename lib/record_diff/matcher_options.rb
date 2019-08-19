@@ -4,7 +4,8 @@ module RecordDiff
   # Handles the creation of Matcher options.
   class MatcherOptions
     DEFAULT_OPTIONS = {
-      id_method: :id,
+      before_id: :id,
+      after_id: :id,
       before_transform: :itself,
       after_transform: :itself
     }.freeze
@@ -17,11 +18,12 @@ module RecordDiff
       symbol_or_proc.to_proc
     end
 
-    attr_reader :id_method, :options
+    attr_reader :before_id, :after_id, :options
 
     def initialize(options = {})
       @options = DEFAULT_OPTIONS.merge options
-      @id_method = @options[:id_method].to_proc
+      @before_id = @options[:before_id].to_proc
+      @after_id = @options[:after_id].to_proc
     end
 
     def before_transform

@@ -4,10 +4,10 @@ module RecordDiff
   module Results
     # When a record has been added.
     class AddedResult < AbstractResult
-      def initialize(id:, after:)
+      def initialize(id:, after:, after_compare:)
         @id = id
-        @before = nil
-        @after = after
+        @after_original = after
+        @after_compare = after_compare
       end
 
       def added?
