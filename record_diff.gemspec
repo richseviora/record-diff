@@ -2,11 +2,11 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'zhuli/version'
+require 'record_diff/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'zhuli'
-  spec.version       = ZhuLi::VERSION
+  spec.name          = 'record_diff'
+  spec.version       = RecordDiff::VERSION
   spec.authors       = ['Rich Seviora']
   spec.email         = ['richard.seviora@gmail.com']
 

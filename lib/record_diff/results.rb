@@ -6,7 +6,7 @@ require_relative 'results/changed_result'
 require_relative 'results/dropped_result'
 require_relative 'results/unchanged_result'
 
-module ZhuLi
+module RecordDiff
   # Contains Result types.
   module Results
   end

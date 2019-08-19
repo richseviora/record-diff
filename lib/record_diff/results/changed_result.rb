@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ZhuLi
+module RecordDiff
   module Results
     # If the ID can be matched, but the two records have changed.
     class ChangedResult < AbstractResult

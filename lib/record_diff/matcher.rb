@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ZhuLi
+module RecordDiff
   # Handles matching results.
   class Matcher
     attr_reader :before, :after, :id_method, :before_grouped, :after_grouped
@@ -58,7 +58,7 @@ module ZhuLi
 
     # @param [Array] before_ary
     # @param [Array] after_ary
-    # @return [Array<ZhuLi::Results::AbstractResult>]
+    # @return [Array<RecordDiff::Results::AbstractResult>]
     def generate_result(key, before_ary, after_ary)
       raise "Multiple records to compare with same Key #{key}" if
         before_ary.count > 1 || after_ary.count > 1

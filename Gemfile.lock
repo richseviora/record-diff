@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    zhuli (0.1.0)
+    record_diff (0.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -51,10 +51,10 @@ DEPENDENCIES
   bundler (~> 2.0)
   pry (~> 0.12)
   rake (~> 10.0)
+  record_diff!
   rspec (~> 3.0)
   rubocop (~> 0.74)
   rubocop-rspec (~> 1.35)
-  zhuli!
 
 BUNDLED WITH
    2.0.2

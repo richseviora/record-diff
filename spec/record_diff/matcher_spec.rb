@@ -3,7 +3,7 @@
 require 'rspec'
 require 'ostruct'
 
-RSpec.describe ZhuLi::Matcher do
+RSpec.describe RecordDiff::Matcher do
   def create_obj(hsh)
     OpenStruct.new(hsh)
   end

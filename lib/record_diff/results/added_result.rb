@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ZhuLi
+module RecordDiff
   module Results
     # When a record has been added.
     class AddedResult < AbstractResult

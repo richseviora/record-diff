@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ZhuLi
+module RecordDiff
   # Convenience wrapper for result array.
   class ResultSet
     def initialize(results)

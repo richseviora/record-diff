@@ -3,13 +3,13 @@
 require 'rspec'
 require 'ostruct'
 
-RSpec.describe ZhuLi::ResultSet do
+RSpec.describe RecordDiff::ResultSet do
   def create_obj(hsh)
     OpenStruct.new(hsh)
   end
   describe '#process' do
     subject(:result_set) do
-      ZhuLi::Matcher.new(before: before_ary, after: after_ary).results
+      RecordDiff::Matcher.new(before: before_ary, after: after_ary).results
     end
 
     let(:before_ary) do

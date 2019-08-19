@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ZhuLi
+module RecordDiff
   module Results
     # Dropped result, if the ID is not matched in the new data.
     class DroppedResult < AbstractResult
