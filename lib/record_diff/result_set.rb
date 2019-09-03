@@ -2,34 +2,25 @@
 
 module RecordDiff
   # Convenience wrapper for result array.
-  class ResultSet
+  class ResultSet < Array
     def initialize(results)
-      @results = results
+      super results
     end
 
     def unchanged
-      results.select(&:unchanged?)
+      select(&:unchanged?)
     end
 
     def changed
-      results.select(&:changed?)
+      select(&:changed?)
     end
 
     def added
-      results.select(&:added?)
+      select(&:added?)
     end
 
     def dropped
-      results.select(&:dropped?)
+      select(&:dropped?)
     end
-
-    def all
-      results
-    end
-
-    private
-
-    # @return [Enumerable]
-    attr_reader :results
   end
 end

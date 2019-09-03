@@ -2,9 +2,7 @@
 
 # Record Diff
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/record_diff`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+The Record Diff gem allows you to compare and diff two enumerables using a key method. The records can also be transformed and filtered.
 
 ## Installation
 
@@ -24,7 +22,18 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Comparing two enumerables
+
+
+### Comparing Two Hashes
+```ruby
+a = { unchanged: 1, dropped: 2, changed: 3}
+b = { added: 1, unchanged: 1, changed: 4 }
+result = RecordDiff::Matcher.diff_hash(a, b)
+first_change = result.changed.first # => ResultSet::ChangedResult
+first_change.id # :changed
+first_change.before_compare # { unchanged: 1, dropped: 2, changed: 3}
+```
 
 ## Development
 

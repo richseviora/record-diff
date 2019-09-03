@@ -8,11 +8,14 @@ module RecordDiff
   class Matcher
     extend Forwardable
     attr_reader :before, :after, :before_grouped, :after_grouped
+    # @return [RecordDiff::ResultSet] - the results of the diff operation.
     attr_reader :results
     attr_reader :options
 
     def_delegators :options, :before_id, :after_id,
                    :before_transform, :after_transform
+
+    def_delegators :results, :changed, :unchanged, :dropped, :added, :all
 
     def self.diff_hash(before:, after:)
       new before: before, after: after,
@@ -63,6 +66,7 @@ module RecordDiff
       [generate_result_obj(key, before_obj, after_obj)]
     end
 
+    # @return
     def generate_result_obj(key, before, after) # rubocop:disable MethodLength
       before_compare = before ? before_transform.call(before) : nil
       after_compare = after ? after_transform.call(after) : nil
