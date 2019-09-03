@@ -15,8 +15,18 @@ module RecordDiff
     def self.create_transform_method(arg = :itself)
       return proc { |ary| ary[1] } if arg == :second
       return transform_from_hsh arg if arg.is_a?(Hash)
+      return create_proc_chain arg if arg.is_a?(Array)
 
       arg.to_proc
+    end
+
+    def self.create_proc_chain(ary)
+      procs = ary.map { |a| create_transform_method a }
+      proc do |input|
+        procs.reduce(input) do |result, next_proc|
+          next_proc.call(result)
+        end
+      end
     end
 
     # Creates a proc based on the hash provided.

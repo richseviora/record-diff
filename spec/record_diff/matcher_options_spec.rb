@@ -78,5 +78,21 @@ RSpec.describe RecordDiff::MatcherOptions do
         end
       end
     end
+
+    context 'with an array of methods provided as before/after' do
+      let(:options) do
+        transforms = [:second, { keys: %i[a b] }]
+        { after_transform: transforms, before_transform: transforms }
+      end
+
+      it 'returns the second value in a hash key pair' do
+        output = { a: 1, b: 2 }
+        input  = [1, { a: 1, b: 2, c: 3 }]
+        aggregate_failures do
+          expect(matcher_options.before_transform.call(input)).to eql(output)
+          expect(matcher_options.before_transform.call(input)).to eql(output)
+        end
+      end
+    end
   end
 end
