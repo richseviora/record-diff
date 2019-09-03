@@ -11,11 +11,26 @@ module RecordDiff
     }.freeze
 
     # @return [Proc]
-    # @param [Proc,Symbol] symbol_or_proc - symbol or proc
-    def self.create_transform_method(symbol_or_proc = :itself)
-      return proc { |ary| ary[1] } if symbol_or_proc == :second
+    # @param [Proc,Symbol,Object] arg - symbol or proc
+    def self.create_transform_method(arg = :itself)
+      return proc { |ary| ary[1] } if arg == :second
+      return transform_from_hsh arg if arg.is_a?(Hash)
 
-      symbol_or_proc.to_proc
+      arg.to_proc
+    end
+
+    # Creates a proc based on the hash provided.
+    def self.transform_from_hsh(hsh)
+      return proc { |hash| hash.slice(*hsh[:keys]) } if hsh.keys == [:keys]
+
+      if hsh.keys == [:attrs]
+        return proc do |obj|
+          attrs = hsh[:attrs]
+          Hash[attrs.collect { |k| [k, obj.send(k)] }]
+        end
+      end
+
+      raise StandardError, 'Unexpected Hash Config'
     end
 
     attr_reader :before_id, :after_id, :options
@@ -27,13 +42,13 @@ module RecordDiff
     end
 
     def before_transform
-      opt = options[:before_transform]
-      @before_transform ||= self.class.create_transform_method opt
+      @before_transform ||=
+        self.class.create_transform_method options[:before_transform]
     end
 
     def after_transform
-      opt = options[:after_transform]
-      @after_transform = self.class.create_transform_method opt
+      @after_transform ||=
+        self.class.create_transform_method options[:after_transform]
     end
   end
 end
