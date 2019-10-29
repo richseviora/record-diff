@@ -9,10 +9,12 @@ RSpec.describe RecordDiff::Matcher do
   end
   describe '#process' do
     subject(:matcher) do
-      described_class.new(before: before_enum, after: after_enum)
+      described_class.new(before: before_enum, after: after_enum,
+                          options: options)
                      .process
     end
 
+    let(:options) { {} }
     let(:before_enum) do
       [create_obj(id: 1, a: 1),
        create_obj(id: 2, a: 2),
@@ -37,6 +39,33 @@ RSpec.describe RecordDiff::Matcher do
                         after: create_obj(id: 2, a: 1),
                         id: 2, changed?: true)
       )
+    end
+
+    context 'when a transform method fails' do
+      let(:options) do
+        throwing_error = lambda do |obj|
+          raise 'Whatever!' if obj.id == 4
+
+          obj
+        end
+        { before_transform: throwing_error }
+      end
+
+      it 'picks up the right results' do # rubocop:disable ExampleLength
+        results = matcher.results.all
+        expect(results).to contain_exactly(
+          have_attributes(before: nil, after: create_obj(id: 3, a: 2),
+                          id: 3, added?: true),
+          have_attributes(before: create_obj(id: 1, a: 1), after: nil,
+                          id: 1, dropped?: true),
+          have_attributes(before: an_instance_of(RuntimeError),
+                          after: create_obj(id: 4, a: 1),
+                          id: 4, error?: true),
+          have_attributes(before: create_obj(id: 2, a: 2),
+                          after: create_obj(id: 2, a: 1),
+                          id: 2, changed?: true)
+        )
+      end
     end
   end
 

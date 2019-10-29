@@ -68,8 +68,15 @@ module RecordDiff
 
     # @return
     def generate_result_obj(key, before, after) # rubocop:disable MethodLength
-      before_compare = before ? before_transform.call(before) : nil
-      after_compare = after ? after_transform.call(after) : nil
+      before_compare, after_compare = generate_compares before, after
+      if before_compare.is_a?(StandardError) ||
+         after_compare.is_a?(StandardError)
+        return Results::ErroredResult.new id: key,
+                                          before: before,
+                                          before_compare: before_compare,
+                                          after: after,
+                                          after_compare: after_compare
+      end
       if before_compare.nil?
         return Results::AddedResult.new id: key,
                                         after: after,
@@ -92,6 +99,20 @@ module RecordDiff
         id: key, before: before, before_compare: before_compare,
         after: after, after_compare: after_compare
       )
+    end
+
+    def generate_compares(before, after) # rubocop:disable MethodLength
+      begin
+        before_compare = before ? before_transform.call(before) : nil
+      rescue StandardError => e
+        before_compare = e
+      end
+      begin
+        after_compare = after ? after_transform.call(after) : nil
+      rescue StandardError => e
+        after_compare = e
+      end
+      [before_compare, after_compare]
     end
   end
 end

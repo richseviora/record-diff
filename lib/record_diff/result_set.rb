@@ -22,5 +22,13 @@ module RecordDiff
     def dropped
       select(&:dropped?)
     end
+
+    def errored
+      select(&:error?)
+    end
+
+    def all
+      self
+    end
   end
 end

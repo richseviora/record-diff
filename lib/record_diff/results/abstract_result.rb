@@ -28,6 +28,10 @@ module RecordDiff
       def dropped?
         false
       end
+
+      def error?
+        false
+      end
     end
   end
 end
